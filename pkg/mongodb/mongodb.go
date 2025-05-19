@@ -17,13 +17,18 @@ const (
 )
 
 func NewMongoDB(cfg *MongoDbOptions) (*mongo.Client, error) {
-	uriAddress := fmt.Sprintf(
-		"mongodb://%s:%s@%s:%d",
-		cfg.User,
-		cfg.Password,
-		cfg.Host,
-		cfg.Port,
-	)
+	var uriAddress string
+	if cfg.Uri != "" {
+		uriAddress = fmt.Sprintf(
+			"mongodb://%s:%s@%s:%d",
+			cfg.User,
+			cfg.Password,
+			cfg.Host,
+			cfg.Port,
+		)
+	} else {
+		uriAddress = cfg.Uri
+	}
 
 	opt := options.Client().ApplyURI(uriAddress).
 		SetConnectTimeout(connectTimeout).

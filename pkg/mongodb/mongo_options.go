@@ -6,4 +6,5 @@ type MongoDbOptions struct {
 	User     string `mapstructure:"user"`
 	Password string `mapstructure:"password"`
 	Database string `mapstructure:"database"`
+	Uri      string `mapstructure:"uri"`
 }
