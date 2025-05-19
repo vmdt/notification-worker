@@ -11,22 +11,28 @@ import (
 )
 
 type RabbitMQConfig struct {
-	Host         string
-	Port         int
-	User         string
-	Password     string
-	ExchangeName string
-	Kind         string
+	Host         string `mapstructure:"host"`
+	Port         int    `mapstructure:"port"`
+	User         string `mapstructure:"user"`
+	Password     string `mapstructure:"password"`
+	ExchangeName string `mapstructure:"exchange_name"`
+	Kind         string `mapstructure:"kind"`
+	Uri          string `mapstructure:"uri"`
 }
 
 func NewRabbitMQConn(cfg *RabbitMQConfig, ctx context.Context) (*amqp.Connection, error) {
-	connAddr := fmt.Sprintf(
-		"amqp://%s:%s@%s:%d/",
-		cfg.User,
-		cfg.Password,
-		cfg.Host,
-		cfg.Port,
-	)
+	var connAddr string
+	if cfg.Uri != "" {
+		connAddr = fmt.Sprintf(
+			"amqp://%s:%s@%s:%d/",
+			cfg.User,
+			cfg.Password,
+			cfg.Host,
+			cfg.Port,
+		)
+	} else {
+		connAddr = cfg.Uri
+	}
 
 	bo := backoff.NewExponentialBackOff()
 	bo.MaxElapsedTime = 10 * time.Second // Maximum time to retry

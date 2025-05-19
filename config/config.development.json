@@ -1,0 +1,28 @@
+{
+	"echo": {
+		"port": ":5002",
+		"development": true,
+		"base_path": "/api/v1",
+		"debug_errors_response": true
+	},
+	"mongodb": {
+		"host": "localhost",
+		"port": 27017,
+		"user": "",
+		"password": "",
+		"database": "travel",
+		"uri": "mongodb+srv://travel:travel@cluster0.obnnzsj.mongodb.net/travel?retryWrites=true&w=majority"
+	},
+	"logger": {
+		"level": "debug"
+	},
+	"rabbitmq": {
+		"user": "guest",
+		"password": "guest",
+		"host": "localhost",
+		"port": 5672,
+		"uri": "amqps://mnvczwsy:bijdXySzgcZ19kd-EthlzcCCLpYgU1a-@armadillo.rmq.cloudamqp.com/mnvczwsy",
+		"exchange": "notification",
+		"kind": "topic"
+	}
+}
