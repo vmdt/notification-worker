@@ -11,6 +11,7 @@ import (
 	"github.com/vmdt/notification-worker/pkg/logger"
 	"github.com/vmdt/notification-worker/pkg/mongodb"
 	"github.com/vmdt/notification-worker/pkg/rabbitmq"
+	redis2 "github.com/vmdt/notification-worker/pkg/redis"
 	"github.com/vmdt/notification-worker/server"
 	"go.uber.org/fx"
 )
@@ -29,6 +30,7 @@ func main() {
 				mongodb.NewMongoDB,
 				repositories.NewMongoNotificationScheduleRepository,
 				mailer.NewMailer,
+				redis2.NewRedisClient,
 			),
 			fx.Invoke(server.RunServers),
 			fx.Invoke(configurations.ConfigConsumers),
