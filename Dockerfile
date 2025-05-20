@@ -18,7 +18,10 @@ FROM alpine:latest
 RUN apk --no-cache add ca-certificates
 
 COPY --from=builder /app/build /release
-ENV APP_ENV=development
-ENV CONFIG_PATH=/config
+
+ARG APP_ENV
+ARG CONFIG_PATH
+ENV APP_ENV=${APP_ENV}
+ENV CONFIG_PATH=${CONFIG_PATH}
 
 ENTRYPOINT [ "/release" ]
