@@ -24,7 +24,6 @@ func (c Consumer) ConsumeMessage(msg interface{}, name string, queue string, key
 	if err != nil {
 		c.log.Error("Error in opening channel to consume message")
 	}
-	defer channel.Close()
 
 	err = channel.ExchangeDeclare(
 		name,       // name

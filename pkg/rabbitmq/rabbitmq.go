@@ -22,7 +22,7 @@ type RabbitMQConfig struct {
 
 func NewRabbitMQConn(cfg *RabbitMQConfig, ctx context.Context) (*amqp.Connection, error) {
 	var connAddr string
-	if cfg.Uri != "" {
+	if cfg.Uri == "" {
 		connAddr = fmt.Sprintf(
 			"amqp://%s:%s@%s:%d/",
 			cfg.User,

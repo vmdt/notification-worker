@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/vmdt/notification-worker/config"
+	"github.com/vmdt/notification-worker/configurations"
 	"github.com/vmdt/notification-worker/contracts/repositories"
 	"github.com/vmdt/notification-worker/pkg/cron"
 	echoserver "github.com/vmdt/notification-worker/pkg/echo"
@@ -30,6 +31,7 @@ func main() {
 				mailer.NewMailer,
 			),
 			fx.Invoke(server.RunServers),
+			fx.Invoke(configurations.ConfigConsumers),
 		),
 	).Run()
 }
