@@ -2,10 +2,12 @@ package main
 
 import (
 	"github.com/vmdt/notification-worker/config"
+	"github.com/vmdt/notification-worker/contracts/repositories"
 	"github.com/vmdt/notification-worker/pkg/cron"
 	echoserver "github.com/vmdt/notification-worker/pkg/echo"
 	"github.com/vmdt/notification-worker/pkg/http"
 	"github.com/vmdt/notification-worker/pkg/logger"
+	"github.com/vmdt/notification-worker/pkg/mongodb"
 	"github.com/vmdt/notification-worker/pkg/rabbitmq"
 	"github.com/vmdt/notification-worker/server"
 	"go.uber.org/fx"
@@ -22,6 +24,8 @@ func main() {
 				cron.NewCronManager,
 				http.NewContext,
 				echoserver.NewEchoServer,
+				mongodb.NewMongoDB,
+				repositories.NewMongoNotificationScheduleRepository,
 			),
 			fx.Invoke(server.RunServers),
 		),

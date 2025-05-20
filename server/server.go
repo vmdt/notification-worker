@@ -8,8 +8,11 @@ import (
 	"github.com/labstack/echo/v4"
 
 	"github.com/vmdt/notification-worker/config"
+	"github.com/vmdt/notification-worker/contracts"
 	echoserver "github.com/vmdt/notification-worker/pkg/echo"
 	"github.com/vmdt/notification-worker/pkg/logger"
+	"github.com/vmdt/notification-worker/server/endpoints"
+	"github.com/vmdt/notification-worker/server/handlers"
 	"go.uber.org/fx"
 )
 
@@ -19,6 +22,7 @@ func RunServers(
 	e *echo.Echo,
 	ctx context.Context,
 	cfg *config.Config,
+	repository contracts.NotificationScheduleRepository,
 ) error {
 	lc.Append(fx.Hook{
 		OnStart: func(_ context.Context) error {
@@ -28,6 +32,13 @@ func RunServers(
 				}
 			}()
 
+			// Create notification schedule handler
+			notificationHandler := handlers.NewNotificationScheduleHandler(log, repository)
+
+			// Register routes
+			endpoints.RegisterNotificationScheduleRoutes(e, notificationHandler)
+
+			// Health check endpoint
 			e.GET("/", func(c echo.Context) error {
 				return c.String(http.StatusOK, "ok")
 			})

@@ -18,7 +18,7 @@ const (
 
 func NewMongoDB(cfg *MongoDbOptions) (*mongo.Client, error) {
 	var uriAddress string
-	if cfg.Uri != "" {
+	if cfg.Uri == "" {
 		uriAddress = fmt.Sprintf(
 			"mongodb://%s:%s@%s:%d",
 			cfg.User,
