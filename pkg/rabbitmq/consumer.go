@@ -7,19 +7,19 @@ import (
 	"github.com/vmdt/notification-worker/pkg/logger"
 )
 
-type IConsumer interface {
-	ConsumeMessage(msg interface{}, name string, queue string, key string) error
+type IConsumer[T any] interface {
+	ConsumeMessage(msg interface{}, name string, queue string, key string, dependencies T) error
 }
 
-type Consumer struct {
+type Consumer[T any] struct {
 	cfg     *RabbitMQConfig
 	conn    *amqp.Connection
 	log     logger.ILogger
-	handler func(queue string, msg amqp.Delivery) error
+	handler func(queue string, msg amqp.Delivery, dependencies T) error
 	ctx     context.Context
 }
 
-func (c Consumer) ConsumeMessage(msg interface{}, name string, queue string, key string) error {
+func (c Consumer[T]) ConsumeMessage(msg interface{}, name string, queue string, key string, dependencies T) error {
 	channel, err := c.conn.Channel()
 	if err != nil {
 		c.log.Error("Error in opening channel to consume message")
@@ -99,7 +99,7 @@ func (c Consumer) ConsumeMessage(msg interface{}, name string, queue string, key
 						return
 					}
 					c.log.Infof("Received message: %s", delivery.Body)
-					err := c.handler(queue, delivery)
+					err := c.handler(queue, delivery, dependencies)
 					if err != nil {
 						c.log.Error(err.Error())
 					}
@@ -116,6 +116,6 @@ func (c Consumer) ConsumeMessage(msg interface{}, name string, queue string, key
 	return nil
 }
 
-func NewConsumer(ctx context.Context, cfg *RabbitMQConfig, conn *amqp.Connection, log logger.ILogger, handler func(queue string, msg amqp.Delivery) error) IConsumer {
-	return &Consumer{ctx: ctx, cfg: cfg, conn: conn, log: log, handler: handler}
+func NewConsumer[T any](ctx context.Context, cfg *RabbitMQConfig, conn *amqp.Connection, log logger.ILogger, handler func(queue string, msg amqp.Delivery, dependencies T) error) IConsumer[T] {
+	return &Consumer[T]{ctx: ctx, cfg: cfg, conn: conn, log: log, handler: handler}
 }

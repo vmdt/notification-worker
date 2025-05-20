@@ -7,21 +7,25 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/vmdt/notification-worker/contracts"
 	"github.com/vmdt/notification-worker/model"
-	mailer "github.com/vmdt/notification-worker/pkg/email"
 	"github.com/vmdt/notification-worker/pkg/logger"
+	"github.com/vmdt/notification-worker/pkg/rabbitmq"
 )
 
 type NotificationScheduleHandler struct {
 	log        logger.ILogger
 	repository contracts.NotificationScheduleRepository
-	mailer     *mailer.Mailer
+	publisher  rabbitmq.IPublisher
 }
 
-func NewNotificationScheduleHandler(log logger.ILogger, repository contracts.NotificationScheduleRepository, mailer *mailer.Mailer) *NotificationScheduleHandler {
+func NewNotificationScheduleHandler(
+	log logger.ILogger,
+	repository contracts.NotificationScheduleRepository,
+	publisher rabbitmq.IPublisher,
+) *NotificationScheduleHandler {
 	return &NotificationScheduleHandler{
 		log:        log,
 		repository: repository,
-		mailer:     mailer,
+		publisher:  publisher,
 	}
 }
 
@@ -73,15 +77,21 @@ func (h *NotificationScheduleHandler) CreateNotificationSchedule(c echo.Context)
 	}
 
 	// Send email using mailer
-	if err := h.mailer.SendMail("discount", req.To, map[string]interface{}{
-		"appLink":  "https://example.com",
-		"appIcon":  "https://example.com/icon.png",
-		"username": "John Doe",
-	}); err != nil {
-		h.log.Errorf("Error sending email: %v", err)
-		return c.JSON(http.StatusInternalServerError, map[string]string{
-			"error": "Failed to send email",
-		})
+	msg := map[string]interface{}{
+		"to":       req.To,
+		"subject":  req.Subject,
+		"from":     req.From,
+		"template": "discount",
+		"metadata": map[string]interface{}{
+			"username": "John Doe",
+			"appIcon":  "https://example.com/icon.png",
+			"appLink":  "https://example.com",
+		},
+	}
+
+	err = h.publisher.PublishMessage(msg, "notification", "discount_key")
+	if err != nil {
+		h.log.Errorf("Error publishing message: %v", err)
 	}
 
 	// Save to database
