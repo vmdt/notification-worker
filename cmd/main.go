@@ -5,6 +5,7 @@ import (
 	"github.com/vmdt/notification-worker/contracts/repositories"
 	"github.com/vmdt/notification-worker/pkg/cron"
 	echoserver "github.com/vmdt/notification-worker/pkg/echo"
+	mailer "github.com/vmdt/notification-worker/pkg/email"
 	"github.com/vmdt/notification-worker/pkg/http"
 	"github.com/vmdt/notification-worker/pkg/logger"
 	"github.com/vmdt/notification-worker/pkg/mongodb"
@@ -26,6 +27,7 @@ func main() {
 				echoserver.NewEchoServer,
 				mongodb.NewMongoDB,
 				repositories.NewMongoNotificationScheduleRepository,
+				mailer.NewMailer,
 			),
 			fx.Invoke(server.RunServers),
 		),

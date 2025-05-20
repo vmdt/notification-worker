@@ -7,18 +7,21 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/vmdt/notification-worker/contracts"
 	"github.com/vmdt/notification-worker/model"
+	mailer "github.com/vmdt/notification-worker/pkg/email"
 	"github.com/vmdt/notification-worker/pkg/logger"
 )
 
 type NotificationScheduleHandler struct {
 	log        logger.ILogger
 	repository contracts.NotificationScheduleRepository
+	mailer     *mailer.Mailer
 }
 
-func NewNotificationScheduleHandler(log logger.ILogger, repository contracts.NotificationScheduleRepository) *NotificationScheduleHandler {
+func NewNotificationScheduleHandler(log logger.ILogger, repository contracts.NotificationScheduleRepository, mailer *mailer.Mailer) *NotificationScheduleHandler {
 	return &NotificationScheduleHandler{
 		log:        log,
 		repository: repository,
+		mailer:     mailer,
 	}
 }
 
@@ -67,6 +70,18 @@ func (h *NotificationScheduleHandler) CreateNotificationSchedule(c echo.Context)
 		RetryCount:  0,
 		MaxRetries:  req.MaxRetries,
 		Metadata:    req.Metadata,
+	}
+
+	// Send email using mailer
+	if err := h.mailer.SendMail("discount", req.To, map[string]interface{}{
+		"appLink":  "https://example.com",
+		"appIcon":  "https://example.com/icon.png",
+		"username": "John Doe",
+	}); err != nil {
+		h.log.Errorf("Error sending email: %v", err)
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"error": "Failed to send email",
+		})
 	}
 
 	// Save to database

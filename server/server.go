@@ -10,6 +10,7 @@ import (
 	"github.com/vmdt/notification-worker/config"
 	"github.com/vmdt/notification-worker/contracts"
 	echoserver "github.com/vmdt/notification-worker/pkg/echo"
+	mailer "github.com/vmdt/notification-worker/pkg/email"
 	"github.com/vmdt/notification-worker/pkg/logger"
 	"github.com/vmdt/notification-worker/server/endpoints"
 	"github.com/vmdt/notification-worker/server/handlers"
@@ -23,6 +24,7 @@ func RunServers(
 	ctx context.Context,
 	cfg *config.Config,
 	repository contracts.NotificationScheduleRepository,
+	mailer *mailer.Mailer,
 ) error {
 	lc.Append(fx.Hook{
 		OnStart: func(_ context.Context) error {
@@ -33,7 +35,7 @@ func RunServers(
 			}()
 
 			// Create notification schedule handler
-			notificationHandler := handlers.NewNotificationScheduleHandler(log, repository)
+			notificationHandler := handlers.NewNotificationScheduleHandler(log, repository, mailer)
 
 			// Register routes
 			endpoints.RegisterNotificationScheduleRoutes(e, notificationHandler)

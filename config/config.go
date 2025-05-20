@@ -9,6 +9,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 	echoserver "github.com/vmdt/notification-worker/pkg/echo"
+	mailer "github.com/vmdt/notification-worker/pkg/email"
 	"github.com/vmdt/notification-worker/pkg/logger"
 	"github.com/vmdt/notification-worker/pkg/mongodb"
 	"github.com/vmdt/notification-worker/pkg/rabbitmq"
@@ -21,6 +22,7 @@ type Config struct {
 	MongoDb  *mongodb.MongoDbOptions  `mapstructure:"mongodb"`
 	Rabbitmq *rabbitmq.RabbitMQConfig `mapstructure:"rabbitmq"`
 	Echo     *echoserver.EchoConfig   `mapstructure:"echo"`
+	Mailer   *mailer.MailerConfig     `mapstructure:"mailer"`
 }
 
 func InitConfig() (
@@ -29,6 +31,7 @@ func InitConfig() (
 	*mongodb.MongoDbOptions,
 	*rabbitmq.RabbitMQConfig,
 	*echoserver.EchoConfig,
+	*mailer.MailerConfig,
 	error,
 ) {
 	env := os.Getenv("APP_ENV")
@@ -45,7 +48,7 @@ func InitConfig() (
 			//https://stackoverflow.com/questions/18537257/how-to-get-the-directory-of-the-currently-running-file
 			d, err := dirname()
 			if err != nil {
-				return nil, nil, nil, nil, nil, err
+				return nil, nil, nil, nil, nil, nil, err
 			}
 
 			configPath = d
@@ -58,14 +61,14 @@ func InitConfig() (
 	viper.SetConfigType("json")
 
 	if err := viper.ReadInConfig(); err != nil {
-		return nil, nil, nil, nil, nil, errors.Wrap(err, "viper.ReadInConfig")
+		return nil, nil, nil, nil, nil, nil, errors.Wrap(err, "viper.ReadInConfig")
 	}
 
 	if err := viper.Unmarshal(cfg); err != nil {
-		return nil, nil, nil, nil, nil, errors.Wrap(err, "viper.Unmarshal")
+		return nil, nil, nil, nil, nil, nil, errors.Wrap(err, "viper.Unmarshal")
 	}
 
-	return cfg, cfg.Logger, cfg.MongoDb, cfg.Rabbitmq, cfg.Echo, nil
+	return cfg, cfg.Logger, cfg.MongoDb, cfg.Rabbitmq, cfg.Echo, cfg.Mailer, nil
 
 }
 
