@@ -35,6 +35,7 @@ func main() {
 				queue.NewServeMux,
 				queue.NewClient,
 				queue.NewServer,
+				queue.NewInspector,
 			),
 			fx.Invoke(server.RunServers),
 			fx.Invoke(configurations.ConfigConsumers),

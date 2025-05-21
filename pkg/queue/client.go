@@ -13,3 +13,10 @@ func NewClient(config *redis2.RedisOptions) *asynq.Client {
 		Password: config.Password,
 	})
 }
+
+func NewInspector(config *redis2.RedisOptions) *asynq.Inspector {
+	return asynq.NewInspector(asynq.RedisClientOpt{
+		Addr:     fmt.Sprintf("%s:%d", config.Host, config.Port),
+		Password: config.Password,
+	})
+}

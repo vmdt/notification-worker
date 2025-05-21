@@ -21,6 +21,10 @@ func HandleConsumeMicroserviceMessage(queueName string, msg amqp.Delivery, depen
 		return err
 	}
 
+	if microserviceMsg.TaskQueueId != "" {
+		dependencies.AsynqInspector.DeleteTask("discount:send", microserviceMsg.TaskQueueId)
+	}
+
 	task := asynq.NewTask("discount:send", payload)
 
 	timezone := os.Getenv("TIMEZONE")
@@ -34,6 +38,7 @@ func HandleConsumeMicroserviceMessage(queueName string, msg amqp.Delivery, depen
 	}
 
 	layout := "2006-01-02 15:04:05"
+	dependencies.Log.Infof("Schedule at: %s", microserviceMsg.ScheduleAt)
 	scheduledTime, err := time.ParseInLocation(layout, microserviceMsg.ScheduleAt, loc)
 	if err != nil {
 		dependencies.Log.Errorf("Error parsing schedule_at: %v", err)
@@ -45,6 +50,11 @@ func HandleConsumeMicroserviceMessage(queueName string, msg amqp.Delivery, depen
 	}
 
 	dependencies.Log.Infof("Enqueued task: %s with ID: %s", info.Type, info.ID)
+
+	dependencies.Publisher.PublishMessage(map[string]interface{}{
+		"discount_id":   microserviceMsg.DiscountId,
+		"task_queue_id": info.ID,
+	}, "node_service", "node_key")
 
 	return nil
 }

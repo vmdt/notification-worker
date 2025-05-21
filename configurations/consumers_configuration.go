@@ -24,6 +24,7 @@ func ConfigConsumers(
 	publisher rabbitmq.IPublisher,
 	echo *echo.Echo,
 	a *asynq.Client,
+	inspector *asynq.Inspector,
 	notificationScheduleRepository contracts.NotificationScheduleRepository,
 
 ) error {
@@ -39,9 +40,11 @@ func ConfigConsumers(
 	}
 
 	microserviceBase := shared.MicroserviceBase{
-		Log:         log,
-		Cfg:         cfg,
-		AsynqClient: a,
+		Log:            log,
+		Cfg:            cfg,
+		AsynqClient:    a,
+		AsynqInspector: inspector,
+		Publisher:      publisher,
 	}
 
 	microServiceConsumer := rabbitmq.NewConsumer(ctx, cfg.Rabbitmq, connRabbitmq, log, consumer.HandleConsumeMicroserviceMessage)
