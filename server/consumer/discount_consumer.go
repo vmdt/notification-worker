@@ -9,11 +9,12 @@ import (
 )
 
 type DiscountMessage struct {
-	To       string                 `json:"to"`
-	Subject  string                 `json:"subject"`
-	From     string                 `json:"from"`
-	Template string                 `json:"template"`
-	Metadata map[string]interface{} `json:"metadata,omitempty"`
+	To         string                 `json:"to"`
+	Subject    string                 `json:"subject"`
+	From       string                 `json:"from"`
+	Template   string                 `json:"template"`
+	ScheduleAt string                 `json:"schedule_at"`
+	Metadata   map[string]interface{} `json:"metadata,omitempty"`
 }
 
 func HandleConsumeDiscountMessage(queueName string, msg amqp.Delivery, dependencies *shared.DiscountBase) error {

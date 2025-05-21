@@ -14,6 +14,7 @@ import (
 	"github.com/vmdt/notification-worker/pkg/rabbitmq"
 	redis2 "github.com/vmdt/notification-worker/pkg/redis"
 	"github.com/vmdt/notification-worker/server"
+	"github.com/vmdt/notification-worker/workers"
 	"go.uber.org/fx"
 )
 
@@ -35,11 +36,12 @@ func main() {
 				queue.NewServeMux,
 				queue.NewClient,
 				queue.NewServer,
+				workers.NewDiscountWorker,
 			),
 			fx.Invoke(server.RunServers),
 			fx.Invoke(configurations.ConfigConsumers),
 			fx.Invoke(configurations.HookQueueClient),
-			fx.Invoke(configurations.HookQueueServer),
+			fx.Invoke(configurations.HookQueueServer, configurations.HookStartWorker),
 		),
 	).Run()
 }
