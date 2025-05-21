@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/joho/godotenv"
 	"github.com/vmdt/notification-worker/config"
 	"github.com/vmdt/notification-worker/configurations"
 	"github.com/vmdt/notification-worker/contracts/repositories"
@@ -18,6 +19,8 @@ import (
 )
 
 func main() {
+	godotenv.Load()
+
 	fx.New(
 		fx.Options(
 			fx.Provide(
