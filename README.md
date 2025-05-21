@@ -9,6 +9,7 @@ This service is part of the Travel Booking System ecosystem, specifically design
 - Docker and Docker Compose (for containerized deployment)
 - MongoDB
 - RabbitMQ
+- Redis
 
 ### Local Development
 
