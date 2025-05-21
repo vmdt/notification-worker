@@ -15,7 +15,10 @@ func NewServeMux() *asynq.ServeMux {
 
 func NewServer(config *redis2.RedisOptions, logger logger.ILogger) *asynq.Server {
 	return asynq.NewServer(
-		asynq.RedisClientOpt{Addr: fmt.Sprintf("%s:%d", config.Host, config.Port)},
+		asynq.RedisClientOpt{
+			Addr:     fmt.Sprintf("%s:%d", config.Host, config.Port),
+			Password: config.Password,
+		},
 		asynq.Config{Concurrency: 10},
 	)
 }

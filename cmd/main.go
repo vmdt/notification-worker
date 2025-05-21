@@ -10,6 +10,7 @@ import (
 	"github.com/vmdt/notification-worker/pkg/http"
 	"github.com/vmdt/notification-worker/pkg/logger"
 	"github.com/vmdt/notification-worker/pkg/mongodb"
+	"github.com/vmdt/notification-worker/pkg/queue"
 	"github.com/vmdt/notification-worker/pkg/rabbitmq"
 	redis2 "github.com/vmdt/notification-worker/pkg/redis"
 	"github.com/vmdt/notification-worker/server"
@@ -31,9 +32,14 @@ func main() {
 				repositories.NewMongoNotificationScheduleRepository,
 				mailer.NewMailer,
 				redis2.NewRedisClient,
+				queue.NewServeMux,
+				queue.NewClient,
+				queue.NewServer,
 			),
 			fx.Invoke(server.RunServers),
 			fx.Invoke(configurations.ConfigConsumers),
+			fx.Invoke(configurations.HookQueueClient),
+			fx.Invoke(configurations.HookQueueServer),
 		),
 	).Run()
 }

@@ -8,5 +8,8 @@ import (
 )
 
 func NewClient(config *redis2.RedisOptions) *asynq.Client {
-	return asynq.NewClient(asynq.RedisClientOpt{Addr: fmt.Sprintf("%s:%d", config.Host, config.Port)})
+	return asynq.NewClient(asynq.RedisClientOpt{
+		Addr:     fmt.Sprintf("%s:%d", config.Host, config.Port),
+		Password: config.Password,
+	})
 }
