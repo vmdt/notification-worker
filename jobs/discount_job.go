@@ -7,18 +7,10 @@ import (
 
 	"github.com/hibiken/asynq"
 	"github.com/vmdt/notification-worker/pkg/logger"
+	"github.com/vmdt/notification-worker/server/consumer"
 )
 
-type DiscountMessage struct {
-	To         string                 `json:"to"`
-	Subject    string                 `json:"subject"`
-	From       string                 `json:"from"`
-	Template   string                 `json:"template"`
-	ScheduleAt string                 `json:"schedule_at"`
-	Metadata   map[string]interface{} `json:"metadata,omitempty"`
-}
-
-func AddDiscountJob(msg DiscountMessage, a *asynq.Client, log logger.ILogger) error {
+func AddDiscountJob(msg consumer.DiscountMessage, a *asynq.Client, log logger.ILogger) error {
 	payload, err := json.Marshal(msg)
 	if err != nil {
 		return err

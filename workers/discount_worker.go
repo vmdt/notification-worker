@@ -2,40 +2,37 @@ package workers
 
 import (
 	"context"
-	"encoding/json"
 
 	"github.com/hibiken/asynq"
-	"github.com/vmdt/notification-worker/jobs"
 	"github.com/vmdt/notification-worker/pkg/logger"
 )
 
-type DiscountWorker struct {
+type DiscountWorker[T any] struct {
 	queueName string
 	mux       *asynq.ServeMux
 	ctx       context.Context
 	log       logger.ILogger
+	handler   func(msg interface{}, dependencies T) error
 }
 
-func NewDiscountWorker(mux *asynq.ServeMux, ctx context.Context, log logger.ILogger) *DiscountWorker {
-	return &DiscountWorker{
+func NewDiscountWorker[T any](
+	mux *asynq.ServeMux,
+	ctx context.Context,
+	log logger.ILogger,
+	handler func(msg interface{}, dependencies T) error,
+) *DiscountWorker[T] {
+	return &DiscountWorker[T]{
 		queueName: "discount:send",
 		mux:       mux,
 		ctx:       ctx,
 		log:       log,
+		handler:   handler,
 	}
 }
 
-func (d *DiscountWorker) Start() {
-	d.log.Infof("Starting discount worker: %s", d.queueName)
-
+func (d *DiscountWorker[T]) Start(dependencies T) {
 	d.mux.HandleFunc(d.queueName, func(ctx context.Context, task *asynq.Task) error {
-		var msg jobs.DiscountMessage
-		if err := json.Unmarshal(task.Payload(), &msg); err != nil {
-			d.log.Errorf("Error unmarshaling task payload: %v", err)
-			return err
-		}
-
-		d.log.Infof("Processing discount message: %+v", msg)
+		d.handler(task.Payload(), dependencies)
 		return nil
 	})
 }
