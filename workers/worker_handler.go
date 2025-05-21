@@ -14,7 +14,7 @@ func HandleDiscountWorker(msg interface{}, dependencies *shared.DiscountBase) er
 		return err
 	}
 
-	err := dependencies.Publisher.PublishMessage(discountMsg, dependencies.Cfg.Rabbitmq.ExchangeName, "discount_key")
+	err := dependencies.Publisher.PublishMessage(discountMsg, "discount", "discount_key")
 	if err != nil {
 		dependencies.Log.Errorf("Error publishing message: %v", err)
 		return err

@@ -3,6 +3,7 @@ package configurations
 import (
 	"context"
 
+	"github.com/hibiken/asynq"
 	"github.com/labstack/echo/v4"
 	"github.com/streadway/amqp"
 	"github.com/vmdt/notification-worker/config"
@@ -22,6 +23,7 @@ func ConfigConsumers(
 	mailer *mailer.Mailer,
 	publisher rabbitmq.IPublisher,
 	echo *echo.Echo,
+	a *asynq.Client,
 	notificationScheduleRepository contracts.NotificationScheduleRepository,
 
 ) error {
@@ -36,10 +38,25 @@ func ConfigConsumers(
 		Echo:                           echo,
 	}
 
+	microserviceBase := shared.MicroserviceBase{
+		Log:         log,
+		Cfg:         cfg,
+		AsynqClient: a,
+	}
+
+	microServiceConsumer := rabbitmq.NewConsumer(ctx, cfg.Rabbitmq, connRabbitmq, log, consumer.HandleConsumeMicroserviceMessage)
+
 	discountConsumer := rabbitmq.NewConsumer(ctx, cfg.Rabbitmq, connRabbitmq, log, consumer.HandleConsumeDiscountMessage)
 
 	go func() {
-		err := discountConsumer.ConsumeMessage(nil, cfg.Rabbitmq.ExchangeName, "discount_queue", "discount_key", &discountBase)
+		err := discountConsumer.ConsumeMessage(nil, "discount", "discount_queue", "discount_key", &discountBase)
+		if err != nil {
+			log.Error(err)
+		}
+	}()
+
+	go func() {
+		err := microServiceConsumer.ConsumeMessage(nil, cfg.Rabbitmq.ExchangeName, "microservice_queue", "microservice_key", &microserviceBase)
 		if err != nil {
 			log.Error(err)
 		}
