@@ -1,2 +1,4 @@
 .env
 .gitignore
+/config/config.*.json
+/config/config.json
