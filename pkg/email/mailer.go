@@ -78,6 +78,8 @@ func (m *Mailer) SendMail(template string, to string, locals map[string]interfac
 	e.HTML = []byte(htmlBody)
 
 	addr := fmt.Sprintf("%s:%d", m.cfg.SMTPHost, m.cfg.SMTPPort)
+	m.log.Infof("Sending email to %s with subject %s", to, subject)
+	m.log.Infof("SMTP server: %s", addr)
 	auth := smtp.PlainAuth("", m.cfg.SMTPUser, m.cfg.SMTPPassword, m.cfg.SMTPHost)
 
 	return e.Send(addr, auth)
