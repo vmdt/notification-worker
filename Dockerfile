@@ -5,7 +5,7 @@ ENV CGO_ENABLED=0 GOOS=linux
 WORKDIR /app
 
 # Install dependencies
-RUN apk --update --no-cache add ca-certificates make bash
+RUN apk --no-cache add ca-certificates tzdata
 
 COPY . .
 
