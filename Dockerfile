@@ -15,7 +15,7 @@ RUN go mod download
 RUN go build -o build cmd/main.go
 
 FROM alpine:latest
-RUN apk --no-cache add ca-certificates
+RUN apk --no-cache add ca-certificates tzdata 
 
 COPY --from=builder /app/build /release
 
