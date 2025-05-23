@@ -18,6 +18,7 @@ FROM alpine:latest
 RUN apk --no-cache add ca-certificates tzdata 
 
 COPY --from=builder /app/build /release
+COPY --from=builder /app/templates /templates
 
 ARG APP_ENV
 ARG CONFIG_PATH

@@ -84,6 +84,8 @@ func (m *Mailer) SendMail(template string, to string, locals map[string]interfac
 		ServerName:         m.cfg.SMTPHost,
 	}
 
+	m.log.Infof("Sending email to %s with subject %s", to, subject)
+	m.log.Infof("SMTP server: %s", addr)
 	auth := smtp.PlainAuth("", m.cfg.SMTPUser, m.cfg.SMTPPassword, m.cfg.SMTPHost)
 
 	return e.SendWithTLS(addr, auth, tls)
