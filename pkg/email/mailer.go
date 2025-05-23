@@ -1,6 +1,7 @@
 package mailer
 
 import (
+	"crypto/tls"
 	"fmt"
 	"io/ioutil"
 	"net/smtp"
@@ -78,7 +79,12 @@ func (m *Mailer) SendMail(template string, to string, locals map[string]interfac
 	e.HTML = []byte(htmlBody)
 
 	addr := fmt.Sprintf("%s:%d", m.cfg.SMTPHost, m.cfg.SMTPPort)
+	tls := &tls.Config{
+		InsecureSkipVerify: true,
+		ServerName:         m.cfg.SMTPHost,
+	}
+
 	auth := smtp.PlainAuth("", m.cfg.SMTPUser, m.cfg.SMTPPassword, m.cfg.SMTPHost)
 
-	return e.Send(addr, auth)
+	return e.SendWithTLS(addr, auth, tls)
 }

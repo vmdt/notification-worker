@@ -1,0 +1,40 @@
+{
+	"echo": {
+		"port": ":5002",
+		"development": true,
+		"base_path": "/api/v1",
+		"debug_errors_response": true
+	},
+	"mongodb": {
+		"host": "localhost",
+		"port": 27017,
+		"user": "",
+		"password": "",
+		"database": "travel",
+		"uri": "mongodb+srv://travel:travel@cluster0.obnnzsj.mongodb.net/travel?retryWrites=true&w=majority"
+	},
+	"logger": {
+		"level": "debug"
+	},
+	"rabbitmq": {
+		"user": "guest",
+		"password": "guest",
+		"host": "localhost",
+		"port": 5672,
+		"uri": "amqps://mnvczwsy:bijdXySzgcZ19kd-EthlzcCCLpYgU1a-@armadillo.rmq.cloudamqp.com/mnvczwsy",
+		"exchange_name": "microservice",
+		"kind": "direct"
+	},
+	"mailer": {
+		"smtp_host": "smtp.gmail.com",
+		"smtp_port": 465,
+		"smtp_user": "travelife.booking@gmail.com",
+		"smtp_password": "bfpi aouu zoda vjng",
+		"sender": "travelife.booking@gmail.com"
+	},
+	"redis": {
+		"host": "redis-15652.c292.ap-southeast-1-1.ec2.redns.redis-cloud.com",
+		"port": 15652,
+		"password": "v3Xw0Y9SNdpL2NdedRlYzVD8qzH6DzMj"
+	}
+}
