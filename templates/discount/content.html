@@ -277,7 +277,13 @@
 																						"
 																					>
 																						Cảm ơn bạn đã là một khách hàng thân thiết của chúng tôi.
-                                            Tour du lịch {{ tourName }} đang được áp dụng chương trình khuyến mãi đặc biệt. Chúng tôi rất vui khi được gửi đến bạn mã giảm giá.
+											Tour du lịch 
+											{{#if tourLink}}
+												<a href="{{ tourLink }}" style="color: #4aa1f3; text-decoration: underline;" target="_blank">{{ tourName }}</a>
+											{{else}}
+												{{ tourName }}
+											{{/if}}
+											đang được áp dụng chương trình khuyến mãi đặc biệt. Chúng tôi rất vui khi được gửi đến bạn mã giảm giá.
                                             Thời gian áp dụng mã giảm giá là từ {{ startDate }} đến {{ endDate }}. Bạn có thể sử dụng mã giảm giá này để nhận được ưu đãi đặc biệt cho chuyến đi của mình.
                                             Mã giảm giá của bạn là:
 																					</p>
